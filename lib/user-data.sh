@@ -13,7 +13,7 @@ sudo amazon-linux-extras install -y php7.4
 sudo yum install -y php-{gd,mbstring}
 
 # confirm that we have installed PHP 7.4.
-php --version >> install.out
+php --version >> /home/ec2-user/install.out
 
 # sudo nano /etc/php.ini and set the following parameters
 # reboot to make sure these take effect
@@ -26,18 +26,18 @@ php --version >> install.out
 #upload_max_filesize = 256M
 
 # confirm initial values of the following parameters that we have to change
-grep max_execution_time /etc/php.ini >> install.out
-grep memory_limit /etc/php.ini >> install.out
-grep post_max_size /etc/php.ini >> install.out
-grep upload_max_filezie /etc/php.ini >> install.out
+grep max_execution_time /etc/php.ini >> /home/ec2-user/install.out
+grep memory_limit /etc/php.ini >> /home/ec2-user/install.out
+grep post_max_size /etc/php.ini >> /home/ec2-user/install.out
+grep upload_max_filezie /etc/php.ini >> /home/ec2-user/install.out
 
 # install ImageMagick
 sudo yum install -y php-pear php-devel gcc
 sudo yum install -y ImageMagick ImageMagick-devel ImageMagick-perl
 
 # confirm that we have installed ImageMagick
-convert --version >> install.out
-gm version >> install.out
+convert --version >> /home/ec2-user/install.out
+#gm version >> /home/ec2-user/install.out
 
 # install Apache web server
 sudo yum -y install httpd
@@ -50,7 +50,7 @@ sudo firewall-cmd --add-service={http,https} --permanent
 sudo firewall-cmd --reload
 
 # confirm that we have installed and started Apache web server
-systemctl status httpd >> install.out
+systemctl status httpd >> /home/ec2-user/install.out
 
 # create vhost with Apache access and error logs
 cd /etc/httpd/conf.d
@@ -78,24 +78,25 @@ sudo mkdir /var/log/apache
 sudo service httpd restart
 
 # confirm that we have correctly created vhost
-cat /etc/httpd/conf.d/vhosts.conf >> install.out
+cat /etc/httpd/conf.d/vhosts.conf >> /home/ec2-user/install.out
 
 # install git and download mukurtucms
 sudo yum install -y git
-cd
+cd /home/ec2-user
 mkdir workspace
 cd workspace
 git clone https://github.com/MukurtuCMS/mukurtucms.git
 cp mukurtucms/sites/default/default.settings.php settings.php
+sudo chown -R ec2-user:ec2-user /home/ec2-user/workspace
 
 # confirm that we have successfully copied settings.php
-ls -l mukurtucms/sites/default/settings.php >> install.out
+ls -l mukurtucms/sites/default/settings.php >> /home/ec2-user/install.out
 
 # install mysql client
 sudo yum install -y mysql
 
 # confirm that we have installed MySQL client
-mysql --version >> install.out
+mysql --version >> /home/ec2-user/install.out
 
 # one-time setup setps prior to copy to /var/www/html
 # under SecretsManager > projectName-rds-secret, look up the admin password
