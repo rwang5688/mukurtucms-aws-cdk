@@ -1,284 +1,727 @@
 {
- "Resources": {
-  "MukurtucmsAwsCdkQueueB6EECCCB": {
-   "Type": "AWS::SQS::Queue",
-   "Properties": {
-    "VisibilityTimeout": 300
-   },
-   "UpdateReplacePolicy": "Delete",
-   "DeletionPolicy": "Delete",
-   "Metadata": {
-    "aws:cdk:path": "MukurtucmsAwsCdkStack/MukurtucmsAwsCdkQueue/Resource"
-   }
-  },
-  "MukurtucmsAwsCdkQueuePolicy99AFDF5B": {
-   "Type": "AWS::SQS::QueuePolicy",
-   "Properties": {
-    "PolicyDocument": {
-     "Statement": [
-      {
-       "Action": "sqs:SendMessage",
-       "Condition": {
-        "ArnEquals": {
-         "aws:SourceArn": {
-          "Ref": "MukurtucmsAwsCdkTopic0445AAFC"
-         }
+    "Parameters": {
+     "ec2KeyPair": {
+      "Type": "String",
+      "Default": "ec2-key-pair",
+      "Description": "Key pair for the EC2 instance."
+     },
+     "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+      "Default": "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+     },
+    },
+    "Resources": {
+     "mukurtucmsvpcA0251BFE": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+       "CidrBlock": "10.0.0.0/16",
+       "EnableDnsHostnames": true,
+       "EnableDnsSupport": true,
+       "InstanceTenancy": "default",
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc"
         }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/Resource"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet1Subnet115BCF45": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
        },
-       "Effect": "Allow",
-       "Principal": {
-        "Service": "sns.amazonaws.com"
+       "AvailabilityZone": {
+        "Fn::Select": [
+         0,
+         {
+          "Fn::GetAZs": ""
+         }
+        ]
        },
-       "Resource": {
+       "CidrBlock": "10.0.0.0/24",
+       "MapPublicIpOnLaunch": false,
+       "Tags": [
+        {
+         "Key": "aws-cdk:subnet-name",
+         "Value": "mukurtucms-public-"
+        },
+        {
+         "Key": "aws-cdk:subnet-type",
+         "Value": "Public"
+        },
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1/Subnet"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet1RouteTableDE932123": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       },
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1/RouteTable"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet1RouteTableAssociationD573541C": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+       "RouteTableId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet1RouteTableDE932123"
+       },
+       "SubnetId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet1Subnet115BCF45"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1/RouteTableAssociation"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet1DefaultRoute1E937E6B": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+       "RouteTableId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet1RouteTableDE932123"
+       },
+       "DestinationCidrBlock": "0.0.0.0/0",
+       "GatewayId": {
+        "Ref": "mukurtucmsvpcIGW011DDED6"
+       }
+      },
+      "DependsOn": [
+       "mukurtucmsvpcVPCGW41146B79"
+      ],
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet1/DefaultRoute"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet2SubnetEE88E459": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       },
+       "AvailabilityZone": {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::GetAZs": ""
+         }
+        ]
+       },
+       "CidrBlock": "10.0.1.0/24",
+       "MapPublicIpOnLaunch": false,
+       "Tags": [
+        {
+         "Key": "aws-cdk:subnet-name",
+         "Value": "mukurtucms-public-"
+        },
+        {
+         "Key": "aws-cdk:subnet-type",
+         "Value": "Public"
+        },
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2/Subnet"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet2RouteTable953C9DD0": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       },
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2/RouteTable"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet2RouteTableAssociation97F7C7C4": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+       "RouteTableId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet2RouteTable953C9DD0"
+       },
+       "SubnetId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet2SubnetEE88E459"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2/RouteTableAssociation"
+      }
+     },
+     "mukurtucmsvpcmukurtucmspublicSubnet2DefaultRouteA347F2E4": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+       "RouteTableId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet2RouteTable953C9DD0"
+       },
+       "DestinationCidrBlock": "0.0.0.0/0",
+       "GatewayId": {
+        "Ref": "mukurtucmsvpcIGW011DDED6"
+       }
+      },
+      "DependsOn": [
+       "mukurtucmsvpcVPCGW41146B79"
+      ],
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/mukurtucms-public-Subnet2/DefaultRoute"
+      }
+     },
+     "mukurtucmsvpcIGW011DDED6": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-vpc"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/IGW"
+      }
+     },
+     "mukurtucmsvpcVPCGW41146B79": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       },
+       "InternetGatewayId": {
+        "Ref": "mukurtucmsvpcIGW011DDED6"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-vpc/VPCGW"
+      }
+     },
+     "mukurtucmsrdssecret5F8F72EF": {
+      "Type": "AWS::SecretsManager::Secret",
+      "Properties": {
+       "GenerateSecretString": {
+        "ExcludePunctuation": true,
+        "GenerateStringKey": "password",
+        "SecretStringTemplate": "{\"username\":\"admin\"}"
+       },
+       "Name": "mukurtucms-rds-secret"
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-secret/Resource"
+      }
+     },
+     "mukurtucmsrdssecretAttachment505D9A3A": {
+      "Type": "AWS::SecretsManager::SecretTargetAttachment",
+      "Properties": {
+       "SecretId": {
+        "Ref": "mukurtucmsrdssecret5F8F72EF"
+       },
+       "TargetId": {
+        "Ref": "mukurtucmsrdsinstance9CC6EE3A"
+       },
+       "TargetType": "AWS::RDS::DBInstance"
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-secret/Attachment/Resource"
+      }
+     },
+     "mukurtucmsrdssgD6933982": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+       "GroupDescription": "Mukurtu CMS RDS Instance security group",
+       "SecurityGroupEgress": [
+        {
+         "CidrIp": "0.0.0.0/0",
+         "Description": "Allow all outbound traffic by default",
+         "IpProtocol": "-1"
+        }
+       ],
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-sg/Resource"
+      }
+     },
+     "mukurtucmsrdssgfromMukurtucmsAwsCdkStackmukurtucmsec2sgDD6DD30C3306DBEAE41F": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+       "IpProtocol": "tcp",
+       "Description": "EC2 Instance to RDS Instance (MySQL)",
+       "FromPort": 3306,
+       "GroupId": {
         "Fn::GetAtt": [
-         "MukurtucmsAwsCdkQueueB6EECCCB",
-         "Arn"
+         "mukurtucmsrdssgD6933982",
+         "GroupId"
+        ]
+       },
+       "SourceSecurityGroupId": {
+        "Fn::GetAtt": [
+         "mukurtucmsec2sg034D04A0",
+         "GroupId"
+        ]
+       },
+       "ToPort": 3306
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-sg/from MukurtucmsAwsCdkStackmukurtucmsec2sgDD6DD30C:3306"
+      }
+     },
+     "mukurtucmsrdsinstanceSubnetGroup19D12DB8": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+       "DBSubnetGroupDescription": "Subnet group for mukurtucms-rds-instance database",
+       "SubnetIds": [
+        {
+         "Ref": "mukurtucmsvpcmukurtucmspublicSubnet1Subnet115BCF45"
+        },
+        {
+         "Ref": "mukurtucmsvpcmukurtucmspublicSubnet2SubnetEE88E459"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-instance/SubnetGroup/Default"
+      }
+     },
+     "mukurtucmsrdsinstance9CC6EE3A": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+       "AllocatedStorage": "100",
+       "CopyTagsToSnapshot": true,
+       "DBInstanceClass": "db.m6i.large",
+       "DBInstanceIdentifier": "mukurtucms-rds-instance",
+       "DBSubnetGroupName": {
+        "Ref": "mukurtucmsrdsinstanceSubnetGroup19D12DB8"
+       },
+       "Engine": "mysql",
+       "EngineVersion": "8.0.30",
+       "Iops": 1500,
+       "MasterUsername": {
+        "Fn::Join": [
+         "",
+         [
+          "{{resolve:secretsmanager:",
+          {
+           "Ref": "mukurtucmsrdssecret5F8F72EF"
+          },
+          ":SecretString:username::}}"
+         ]
+        ]
+       },
+       "MasterUserPassword": {
+        "Fn::Join": [
+         "",
+         [
+          "{{resolve:secretsmanager:",
+          {
+           "Ref": "mukurtucmsrdssecret5F8F72EF"
+          },
+          ":SecretString:password::}}"
+         ]
+        ]
+       },
+       "PubliclyAccessible": false,
+       "StorageEncrypted": true,
+       "StorageType": "io1",
+       "VPCSecurityGroups": [
+        {
+         "Fn::GetAtt": [
+          "mukurtucmsrdssgD6933982",
+          "GroupId"
+         ]
+        }
+       ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-rds-instance/Resource"
+      }
+     },
+     "mukurtucmsec2sg034D04A0": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+       "GroupDescription": "Mukurtu CMS EC2 Instance security group",
+       "SecurityGroupEgress": [
+        {
+         "CidrIp": "0.0.0.0/0",
+         "Description": "Allow all outbound traffic by default",
+         "IpProtocol": "-1"
+        }
+       ],
+       "SecurityGroupIngress": [
+        {
+         "CidrIp": "0.0.0.0/0",
+         "Description": "allow SSH access from anywhere",
+         "FromPort": 22,
+         "IpProtocol": "tcp",
+         "ToPort": 22
+        },
+        {
+         "CidrIp": "0.0.0.0/0",
+         "Description": "allow HTTP traffic from anywhere",
+         "FromPort": 80,
+         "IpProtocol": "tcp",
+         "ToPort": 80
+        },
+        {
+         "CidrIp": "0.0.0.0/0",
+         "Description": "allow HTTPS traffic from anywhere",
+         "FromPort": 443,
+         "IpProtocol": "tcp",
+         "ToPort": 443
+        }
+       ],
+       "VpcId": {
+        "Ref": "mukurtucmsvpcA0251BFE"
+       }
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-ec2-sg/Resource"
+      }
+     },
+     "mukurtucmsec2role1628757B": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+       "AssumeRolePolicyDocument": {
+        "Statement": [
+         {
+          "Action": "sts:AssumeRole",
+          "Effect": "Allow",
+          "Principal": {
+           "Service": {
+            "Fn::Join": [
+             "",
+             [
+              "ec2.",
+              {
+               "Ref": "AWS::URLSuffix"
+              }
+             ]
+            ]
+           }
+          }
+         }
+        ],
+        "Version": "2012-10-17"
+       },
+       "ManagedPolicyArns": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::aws:policy/AmazonS3ReadOnlyAccess"
+          ]
+         ]
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-ec2-role/Resource"
+      }
+     },
+     "mukurtucmsec2instanceInstanceProfile8C6960E0": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+       "Roles": [
+        {
+         "Ref": "mukurtucmsec2role1628757B"
+        }
+       ]
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-ec2-instance/InstanceProfile"
+      }
+     },
+     "mukurtucmsec2instanceE5974AD2": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+       "AvailabilityZone": {
+        "Fn::Select": [
+         0,
+         {
+          "Fn::GetAZs": ""
+         }
+        ]
+       },
+       "IamInstanceProfile": {
+        "Ref": "mukurtucmsec2instanceInstanceProfile8C6960E0"
+       },
+       "ImageId": {
+        "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamzn2amihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+       },
+       "InstanceType": "m6i.large",
+       "KeyName": {
+        "Ref": "ec2KeyPair"
+       },
+       "SecurityGroupIds": [
+        {
+         "Fn::GetAtt": [
+          "mukurtucmsec2sg034D04A0",
+          "GroupId"
+         ]
+        }
+       ],
+       "SubnetId": {
+        "Ref": "mukurtucmsvpcmukurtucmspublicSubnet1Subnet115BCF45"
+       },
+       "Tags": [
+        {
+         "Key": "Name",
+         "Value": "MukurtucmsAwsCdkStack/mukurtucms-ec2-instance"
+        }
+       ],
+       "UserData": {
+        "Fn::Base64": "#!/bin/bash\n#!/bin/bash\nsudo yum update -y\n\n# install PHP and required extensions\nsudo amazon-linux-extras install -y epel\nsudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm\n\nsudo yum install -y yum-utils\nsudo yum-config-manager --disable remi-php54\nyum-config-manager --enable remi-php74\n\nsudo amazon-linux-extras install -y php7.4\nsudo yum install -y php-{gd,mbstring}\n\n# confirm that we have installed PHP 7.4.\nphp --version >> install.out\n\n# sudo nano /etc/php.ini and set the following parameters\n# reboot to make sure these take effect\n# Resource limits\n#max_execution_time = 240\n#memory_limit = 512M\n# Data handling\n#post_max_size = 256M\n# File upload\n#upload_max_filesize = 256M\n\n# confirm initial values of the following parameters that we have to change\ngrep max_execution_time /etc/php.ini >> install.out\ngrep memory_limit /etc/php.ini >> install.out\ngrep post_max_size /etc/php.ini >> install.out\ngrep upload_max_filezie /etc/php.ini >> install.out\n\n# install ImageMagick\nsudo yum install -y php-pear php-devel gcc\nsudo yum install -y ImageMagick ImageMagick-devel ImageMagick-perl\n\n# confirm that we have installed ImageMagick\nconvert --version >> install.out\ngm version >> install.out\n\n# install Apache web server\nsudo yum -y install httpd\nsudo systemctl enable --now httpd\n\nsudo yum install -y firewalld\nsudo systemctl enable --now firewalld\n\nsudo firewall-cmd --add-service={http,https} --permanent\nsudo firewall-cmd --reload\n\n# confirm that we have installed and started Apache web server\nsystemctl status httpd >> install.out\n\n# create vhost with Apache access and error logs\ncd /etc/httpd/conf.d\nsudo cat << EOF > vhosts.conf\n<VirtualHost *:80>\n  # The name your website should respond to\n  ServerName mukurtu.rwang5688.com\n\n  # if you want this vhost to listen to extra names, uncomment the next line\n  # ServerAlias foo.com www.bar.com bar.com\n\n  # Tell Apache where your document root is\n  DocumentRoot /var/www/html/mukurtucms\n\n  # Add this line if you are allowing .htaccess overrides.\n  <Directory /var/www/html/mukurtucms>\n    AllowOverride All\n  </Directory>\n\n  CustomLog /var/log/apache/mukurtu.rwang5688.com-access.log combined\n  ErrorLog /var/log/apache/mukurtu.rwang5688.com-error.log\n</VirtualHost>\nEOF\nsudo mkdir /var/log/apache\nsudo service httpd restart\n\n# confirm that we have correctly created vhost\ncat /etc/httpd/conf.d/vhosts.conf >> install.out\n\n# install git and download mukurtucms\nsudo yum install -y git\ncd\nmkdir workspace\ncd workspace\ngit clone https://github.com/MukurtuCMS/mukurtucms.git\ncp mukurtucms/sites/default/default.settings.php settings.php\n\n# confirm that we have successfully copied settings.php\nls -l mukurtucms/sites/default/settings.php >> install.out\n\n# install mysql client\nsudo yum install -y mysql\n\n# confirm that we have installed MySQL client\nmysql --version >> install.out\n\n# one-time setup setps prior to copy to /var/www/html\n# under SecretsManager > projectName-rds-secret, look up the admin password\n# under RDS > Databases > projectName-rds-instance, look up the hostname\n# nano mukurtucms/sites/default/settings.php (the copy)\n# fill in: database name = mukurtucms, username = admin, password = admin_password, host = hostname\n\n# recurring setup steps for updating /var/www/html\n# mysql -h hostname -P 3306 -u admin -p admin_password\n# <MYSQL> drop database mukurtucms\n# <MYSQL> create database mukurtucms;\n# cd ~/workspace\n# sudo rm -rf /var/www/html/mukurtucms\n# sudo cp -r mukurtucms /var/www/html/\n# sudo chown -R apache:apache /var/www/html/mukurtucms\n# sudo service httpd restart\n"
+       }
+      },
+      "DependsOn": [
+       "mukurtucmsec2role1628757B"
+      ],
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/mukurtucms-ec2-instance/Resource"
+      }
+     },
+     "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+       "Analytics": "v2:deflate64:H4sIAAAAAAAA/31RwW6DMAz9lt1DtqIdtmNHpYobgqrXyQSXpYWkip1VFeLfFwqFapN28vN7Vt6zE8vXd/nyBBeKVHWKGl3KrmBQJ5EcTAYOWmR0IuifHapYdvuzGqR9lojMl41WhS8N8sAtKLeecQdlgwu/cGsiqzSwtmYeHkBqglWY3ALjBa6TzdStOaT6atGwKFB5p/m6ddafbwb/EqmpHRKJ1BCDUZPViHtBqBwytWCgRheWv/XTIwMayw5cjfwQYh74rfTCVSS7DTCUQDi7jleYI24+/hBLKA2t7HI7nu9e73Lm7EE32PciR7LejRs94sSaSg/n7YWxFcojPX+v3uQqDj99JK0j5w3rFmU+1h+fTVLPBQIAAA=="
+      },
+      "Metadata": {
+       "aws:cdk:path": "MukurtucmsAwsCdkStack/CDKMetadata/Default"
+      },
+      "Condition": "CDKMetadataAvailable"
+     }
+    },
+    "Conditions": {
+     "CDKMetadataAvailable": {
+      "Fn::Or": [
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "af-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-northeast-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-northeast-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-southeast-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ap-southeast-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "ca-central-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "cn-north-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "cn-northwest-1"
+          ]
+         }
+        ]
+       },
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-central-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-north-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-2"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "eu-west-3"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "me-south-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "sa-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-east-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-east-2"
+          ]
+         }
+        ]
+       },
+       {
+        "Fn::Or": [
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-west-1"
+          ]
+         },
+         {
+          "Fn::Equals": [
+           {
+            "Ref": "AWS::Region"
+           },
+           "us-west-2"
+          ]
+         }
         ]
        }
-      }
-     ],
-     "Version": "2012-10-17"
-    },
-    "Queues": [
-     {
-      "Ref": "MukurtucmsAwsCdkQueueB6EECCCB"
+      ]
      }
-    ]
-   },
-   "Metadata": {
-    "aws:cdk:path": "MukurtucmsAwsCdkStack/MukurtucmsAwsCdkQueue/Policy/Resource"
-   }
-  },
-  "MukurtucmsAwsCdkQueueMukurtucmsAwsCdkStackMukurtucmsAwsCdkTopicB628FEB237E33BF0": {
-   "Type": "AWS::SNS::Subscription",
-   "Properties": {
-    "Protocol": "sqs",
-    "TopicArn": {
-     "Ref": "MukurtucmsAwsCdkTopic0445AAFC"
     },
-    "Endpoint": {
-     "Fn::GetAtt": [
-      "MukurtucmsAwsCdkQueueB6EECCCB",
-      "Arn"
-     ]
-    }
-   },
-   "DependsOn": [
-    "MukurtucmsAwsCdkQueuePolicy99AFDF5B"
-   ],
-   "Metadata": {
-    "aws:cdk:path": "MukurtucmsAwsCdkStack/MukurtucmsAwsCdkQueue/MukurtucmsAwsCdkStackMukurtucmsAwsCdkTopicB628FEB2/Resource"
-   }
-  },
-  "MukurtucmsAwsCdkTopic0445AAFC": {
-   "Type": "AWS::SNS::Topic",
-   "Metadata": {
-    "aws:cdk:path": "MukurtucmsAwsCdkStack/MukurtucmsAwsCdkTopic/Resource"
-   }
-  },
-  "CDKMetadata": {
-   "Type": "AWS::CDK::Metadata",
-   "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOywrCMBBFv8V9MtriQtf9AW3dS5tEmLYmbSZRpOTfzQMENzPnHi7M1HA8w2HXv4kLOfEZB9g614uJRXXfaCXYrl55xZqHLpDnxcwoPj9ZYmCkY7/zAwmLi0OjU+Mv38yCItkMISRsFRlvRb7RGC0xNQPTRioYaf+qTlDV8cuRELn12uFTQVv2F0B3nUbBAAAA"
-   },
-   "Metadata": {
-    "aws:cdk:path": "MukurtucmsAwsCdkStack/CDKMetadata/Default"
-   },
-   "Condition": "CDKMetadataAvailable"
-  }
- },
- "Conditions": {
-  "CDKMetadataAvailable": {
-   "Fn::Or": [
-    {
-     "Fn::Or": [
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "af-south-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-east-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-northeast-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-northeast-2"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-south-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-southeast-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ap-southeast-2"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "ca-central-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "cn-north-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "cn-northwest-1"
-       ]
-      }
-     ]
-    },
-    {
-     "Fn::Or": [
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-central-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-north-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-south-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-west-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-west-2"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "eu-west-3"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "me-south-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "sa-east-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "us-east-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "us-east-2"
-       ]
-      }
-     ]
-    },
-    {
-     "Fn::Or": [
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "us-west-1"
-       ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "us-west-2"
-       ]
-      }
-     ]
-    }
-   ]
-  }
- },
 }
