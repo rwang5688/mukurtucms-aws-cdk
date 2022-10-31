@@ -1,20 +1,22 @@
 #!/bin/bash
+sudo su
+
 # use linux script session to record the installation
-script /home/ec2-user/install.out
+script /home/ec2-user/install.txt
 
 # apply latest patches
-sudo yum update -y
+yum update -y
 
 # install PHP and required extensions
-sudo amazon-linux-extras install -y epel
-sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+amazon-linux-extras install -y epel
+yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
 
-sudo yum install -y yum-utils
-sudo yum-config-manager --disable remi-php54
+yum install -y yum-utils
+yum-config-manager --disable remi-php54
 yum-config-manager --enable remi-php74
 
-sudo amazon-linux-extras install -y php7.4
-sudo yum install -y php-{gd,mbstring}
+amazon-linux-extras install -y php7.4
+yum install -y php-{gd,mbstring}
 
 # confirm that we have installed PHP 7.4.
 php --version
@@ -26,28 +28,28 @@ grep post_max_size /etc/php.ini
 grep upload_max_filezie /etc/php.ini
 
 # install ImageMagick
-sudo yum install -y php-pear php-devel gcc
-sudo yum install -y ImageMagick ImageMagick-devel ImageMagick-perl
+yum install -y php-pear php-devel gcc
+yum install -y ImageMagick ImageMagick-devel ImageMagick-perl
 
 # confirm that we have installed ImageMagick
 convert --version
 
 # install Apache web server
-sudo yum -y install httpd
-sudo systemctl enable --now httpd
+yum -y install httpd
+systemctl enable --now httpd
 
-sudo yum install -y firewalld
-sudo systemctl enable --now firewalld
+yum install -y firewalld
+systemctl enable --now firewalld
 
-sudo firewall-cmd --add-service={http,https} --permanent
-sudo firewall-cmd --reload
+firewall-cmd --add-service={http,https} --permanent
+firewall-cmd --reload
 
 # confirm that we have installed and started Apache web server
 systemctl status httpd
 
 # create vhost with Apache access and error logs
 cd /etc/httpd/conf.d
-sudo cat << EOF > vhosts.conf
+cat << EOF > vhosts.conf
 <VirtualHost *:80>
   # The name your website should respond to
   ServerName mukurtu.rwang5688.com
@@ -67,26 +69,26 @@ sudo cat << EOF > vhosts.conf
   ErrorLog /var/log/apache/mukurtu.rwang5688.com-error.log
 </VirtualHost>
 EOF
-sudo mkdir /var/log/apache
-sudo service httpd restart
+mkdir /var/log/apache
+service httpd restart
 
 # confirm that we have correctly created vhost
 cat /etc/httpd/conf.d/vhosts.conf
 
 # install git and download mukurtucms
-sudo yum install -y git
+yum install -y git
 cd /home/ec2-user
 mkdir workspace
 cd workspace
 git clone https://github.com/MukurtuCMS/mukurtucms.git
 cp mukurtucms/sites/default/default.settings.php settings.php
-sudo chown -R ec2-user:ec2-user /home/ec2-user/workspace
+chown -R ec2-user:ec2-user /home/ec2-user/workspace
 
 # confirm that we have successfully copied settings.php
 ls -l mukurtucms/sites/default/settings.php
 
 # install mysql client
-sudo yum install -y mysql
+yum install -y mysql
 
 # confirm that we have installed MySQL client
 mysql --version
@@ -116,7 +118,7 @@ exit
 #password = admin_password
 #host = hostname
 
-## recurring setup steps for updating /var/www/html
+## recurring setup steps for updating to /var/www/html
 
 # mysql -h hostname -P 3306 -u admin -p admin_password
 # <MYSQL> show databases;
