@@ -1,7 +1,4 @@
 #!/bin/bash
-# use linux script session to record the installation
-sudo script /home/ec2-user/install.txt
-
 # apply latest patches
 sudo yum update -y
 
@@ -90,9 +87,6 @@ sudo yum install -y mysql
 
 # confirm that we have installed MySQL client
 mysql --version
-
-# finish and flush the linux script session
-exit
 
 ## one-time setup setps prior to copy to /var/www/html
 
