@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # apply latest patches
 sudo yum update -y
 
@@ -42,41 +43,13 @@ sudo firewall-cmd --reload
 # confirm that we have installed and started Apache web server
 sudo systemctl status httpd
 
-# create vhost with Apache access and error logs
-cd /etc/httpd/conf.d
-sudo cat << EOF > vhosts.conf
-<VirtualHost *:80>
-  # The name your website should respond to
-  ServerName mukurtu.rwang5688.com
-
-  # if you want this vhost to listen to extra names, uncomment the next line
-  # ServerAlias foo.com www.bar.com bar.com
-
-  # Tell Apache where your document root is
-  DocumentRoot /var/www/html/mukurtucms
-
-  # Add this line if you are allowing .htaccess overrides.
-  <Directory /var/www/html/mukurtucms>
-    AllowOverride All
-  </Directory>
-
-  CustomLog /var/log/apache/mukurtu.rwang5688.com-access.log combined
-  ErrorLog /var/log/apache/mukurtu.rwang5688.com-error.log
-</VirtualHost>
-EOF
-sudo mkdir -p /var/log/apache
-sudo service httpd restart
-
-# confirm that we have correctly created vhost
-sudo cat /etc/httpd/conf.d/vhosts.conf
-
 # install git and download mukurtucms
 sudo yum install -y git
 cd /home/ec2-user
 sudo mkdir -p workspace
 cd workspace
 sudo git clone https://github.com/MukurtuCMS/mukurtucms.git
-sudo cp mukurtucms/sites/default/default.settings.php settings.php
+sudo cp mukurtucms/sites/default/default.settings.php mukurtucms/sites/default/settings.php
 sudo chown -R ec2-user:ec2-user /home/ec2-user/workspace
 
 # confirm that we have successfully copied settings.php
@@ -88,9 +61,11 @@ sudo yum install -y mysql
 # confirm that we have installed MySQL client
 mysql --version
 
+# post-installation steps
+
 ## one-time setup setps prior to copy to /var/www/html
 
-# sudo nano /etc/php.ini and set the following parameters:
+### sudo nano /etc/php.ini and set the following parameters:
 # Resource limits
 #max_execution_time = 240
 #memory_limit = 512M
@@ -99,11 +74,22 @@ mysql --version
 # File upload
 #upload_max_filesize = 256M
 
-# reboot to make sure the /etc/php.ini parameter changes take effect
+### create vhost with Apache access and error logs
+# cd /etc/httpd/conf.d
+# sudo nano vhosts.conf
+# enter contents of vshosts.conf
+# sudo mkdir -p /var/log/apache
 
+### confirm that we have correctly created vhost
+# cat /etc/httpd/conf.d/vhosts.conf
+
+### reboot to make sure the /etc/php.ini parameter changes take effect
+
+### look up database admin password and hostname
 # under SecretsManager > projectName-rds-secret, look up the admin password
 # under RDS > Databases > projectName-rds-instance, look up the hostname
-# nano mukurtucms/sites/default/settings.php (the copy) and set the following parameters:
+
+### nano mukurtucms/sites/default/settings.php (the copy) and set the following parameters:
 # Database parameters
 #name = mukurtucms
 #username = admin
@@ -112,12 +98,14 @@ mysql --version
 
 ## recurring setup steps for updating to /var/www/html
 
+### drop and create mukurtucms database
 # mysql -h hostname -P 3306 -u admin -p admin_password
 # <MYSQL> show databases;
 # <MYSQL> drop database mukurtucms;
 # <MYSQL> create database mukurtucms;
 # <MYSQL> exit;
 
+### remove and copy mukurtucms files
 # cd ~/workspace
 # sudo rm -rf /var/www/html/mukurtucms
 # sudo cp -r mukurtucms /var/www/html/
