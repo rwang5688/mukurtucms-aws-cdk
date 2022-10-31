@@ -27,7 +27,7 @@ export class MukurtucmsAwsCdkStack extends cdk.Stack {
           name: "mukurtucms-public-",
           subnetType: ec2.SubnetType.PUBLIC,
           cidrMask: 24,
-          mapPublicIpOnLaunch: false,
+          mapPublicIpOnLaunch: true,
         },
       ],
     });
