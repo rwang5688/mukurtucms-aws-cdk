@@ -1,55 +1,53 @@
 #!/bin/bash
-sudo su
-
 # use linux script session to record the installation
-script /home/ec2-user/install.txt
+sudo script /home/ec2-user/install.txt
 
 # apply latest patches
-yum update -y
+sudo yum update -y
 
 # install PHP and required extensions
-amazon-linux-extras install -y epel
-yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo amazon-linux-extras install -y epel
+sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
 
-yum install -y yum-utils
-yum-config-manager --disable remi-php54
-yum-config-manager --enable remi-php74
+sudo yum install -y yum-utils
+sudo yum-config-manager --disable remi-php54
+sudo yum-config-manager --enable remi-php74
 
-amazon-linux-extras install -y php7.4
-yum install -y php-{gd,mbstring}
+sudo amazon-linux-extras install -y php7.4
+sudo yum install -y php-{gd,mbstring}
 
 # confirm that we have installed PHP 7.4.
 php --version
 
 # confirm initial values of the following parameters that we have to change
-grep max_execution_time /etc/php.ini
-grep memory_limit /etc/php.ini
-grep post_max_size /etc/php.ini
-grep upload_max_filezie /etc/php.ini
+sudo grep max_execution_time /etc/php.ini
+sudo grep memory_limit /etc/php.ini
+sudo grep post_max_size /etc/php.ini
+sudo grep upload_max_filezie /etc/php.ini
 
 # install ImageMagick
-yum install -y php-pear php-devel gcc
-yum install -y ImageMagick ImageMagick-devel ImageMagick-perl
+sudo yum install -y php-pear php-devel gcc
+sudo yum install -y ImageMagick ImageMagick-devel ImageMagick-perl
 
 # confirm that we have installed ImageMagick
 convert --version
 
 # install Apache web server
-yum -y install httpd
-systemctl enable --now httpd
+sudo yum -y install httpd
+sudo systemctl enable --now httpd
 
-yum install -y firewalld
-systemctl enable --now firewalld
+sudo yum install -y firewalld
+sudo systemctl enable --now firewalld
 
-firewall-cmd --add-service={http,https} --permanent
-firewall-cmd --reload
+sudo firewall-cmd --add-service={http,https} --permanent
+sudo firewall-cmd --reload
 
 # confirm that we have installed and started Apache web server
-systemctl status httpd
+sudo systemctl status httpd
 
 # create vhost with Apache access and error logs
 cd /etc/httpd/conf.d
-cat << EOF > vhosts.conf
+sudo cat << EOF > vhosts.conf
 <VirtualHost *:80>
   # The name your website should respond to
   ServerName mukurtu.rwang5688.com
@@ -69,26 +67,26 @@ cat << EOF > vhosts.conf
   ErrorLog /var/log/apache/mukurtu.rwang5688.com-error.log
 </VirtualHost>
 EOF
-mkdir /var/log/apache
-service httpd restart
+sudo mkdir -p /var/log/apache
+sudo service httpd restart
 
 # confirm that we have correctly created vhost
-cat /etc/httpd/conf.d/vhosts.conf
+sudo cat /etc/httpd/conf.d/vhosts.conf
 
 # install git and download mukurtucms
-yum install -y git
+sudo yum install -y git
 cd /home/ec2-user
-mkdir workspace
+sudo mkdir -p workspace
 cd workspace
-git clone https://github.com/MukurtuCMS/mukurtucms.git
-cp mukurtucms/sites/default/default.settings.php settings.php
-chown -R ec2-user:ec2-user /home/ec2-user/workspace
+sudo git clone https://github.com/MukurtuCMS/mukurtucms.git
+sudo cp mukurtucms/sites/default/default.settings.php settings.php
+sudo chown -R ec2-user:ec2-user /home/ec2-user/workspace
 
 # confirm that we have successfully copied settings.php
-ls -l mukurtucms/sites/default/settings.php
+sudo ls -l mukurtucms/sites/default/settings.php
 
 # install mysql client
-yum install -y mysql
+sudo yum install -y mysql
 
 # confirm that we have installed MySQL client
 mysql --version
