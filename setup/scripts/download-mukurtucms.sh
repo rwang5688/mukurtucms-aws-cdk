@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# install git and 
+# install git
 sudo yum install -y git
 
 # download mukurtucms
@@ -15,8 +15,7 @@ ls -l /home/ec2-user/workspace/mukurtucms/sites/default/settings.php
 # One-time Mukurtu CMS post-download steps
 
 ## create vhost with Apache access and error logs
-# cd /etc/httpd/conf.d
-# sudo nano vhosts.conf
+# sudo nano /etc/httpd/conf.d/vhosts.conf
 # enter contents of vshosts.conf
 sudo mkdir -p /var/log/apache
 sudo service httpd restart
@@ -25,7 +24,7 @@ sudo service httpd restart
 # under SecretsManager > mukurtucms-rds-secret > Retrieve secret value
 # look up: password, host, username
 
-## nano mukurtucms/sites/default/settings.php (the copy) and set the following parameters:
+## nano /home/ec2-user/workspace/mukurtucms/sites/default/settings.php (the copy) and set the following parameters:
 # Database parameters
 #name = mukurtucms
 #username = admin
