@@ -68,7 +68,7 @@ export class MukurtucmsAwsCdkStack extends cdk.Stack {
       publiclyAccessible: false,
       allocatedStorage: 100,
       storageType: rds.StorageType.IO1,
-      iops: 1500,
+      iops: 5000,
       instanceIdentifier: "mukurtucms-rds-instance",
     });
 
