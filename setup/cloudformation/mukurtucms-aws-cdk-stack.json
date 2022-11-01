@@ -328,7 +328,7 @@
        },
        "Engine": "mysql",
        "EngineVersion": "8.0.30",
-       "Iops": 1500,
+       "Iops": 5000,
        "MasterUsername": {
         "Fn::Join": [
          "",
@@ -509,7 +509,7 @@
         }
        ],
        "UserData": {
-        "Fn::Base64": "#!/bin/bash\n#!/bin/bash\r\n\r\n# apply latest patches\r\nyum update -y\r\n\r\n# install PHP and required extensions\r\namazon-linux-extras install -y epel\r\nyum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm\r\n\r\nyum install -y yum-utils\r\nyum-config-manager --disable remi-php54\r\nyum-config-manager --enable remi-php74\r\n\r\namazon-linux-extras install -y php7.4\r\nyum install -y php-{gd,mbstring}\r\n\r\n# install ImageMagick\r\nyum install -y php-pear php-devel gcc\r\nyum install -y ImageMagick ImageMagick-devel ImageMagick-perl\r\n\r\n# install Apache web server\r\nyum -y install httpd\r\nsystemctl enable --now httpd\r\n\r\nyum install -y firewalld\r\nsystemctl enable --now firewalld\r\n\r\nfirewall-cmd --add-service={http,https} --permanent\r\nfirewall-cmd --reload\r\n\r\n# install git and download mukurtucms\r\nyum install -y git\r\nmkdir -p /home/ec2-user/workspace\r\ncd /home/ec2-user/workspace\r\ngit clone https://github.com/MukurtuCMS/mukurtucms.git\r\ncp mukurtucms/sites/default/default.settings.php mukurtucms/sites/default/settings.php\r\nchown -R ec2-user:ec2-user mukurtucms\r\n\r\n# install mysql client\r\nyum install -y mysql\r\n\r\n# confirm that we have installed MySQL client\r\nmysql --version\r\n"
+        "Fn::Base64": "#!/bin/bash\n#!/bin/bash\r\n\r\n# apply latest patches\r\nyum update -y\r\n\r\n# install PHP and required extensions\r\namazon-linux-extras install -y epel\r\nyum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm\r\n\r\nyum install -y yum-utils\r\nyum-config-manager --disable remi-php54\r\nyum-config-manager --enable remi-php74\r\n\r\namazon-linux-extras install -y php7.4\r\nyum install -y php-{gd,mbstring,opcache}\r\n\r\n# install ImageMagick\r\nyum install -y php-pear php-devel gcc\r\nyum install -y ImageMagick ImageMagick-devel ImageMagick-perl\r\n\r\n# install Apache web server\r\nyum -y install httpd\r\nsystemctl enable --now httpd\r\n\r\nyum install -y firewalld\r\nsystemctl enable --now firewalld\r\n\r\nfirewall-cmd --add-service={http,https} --permanent\r\nfirewall-cmd --reload\r\n\r\n# install mysql client\r\nyum install -y mysql\r\n\r\n# PHP post-installation steps\r\n\r\n# sudo pecl install Imagick\r\n\r\n## sudo nano /etc/php.ini and set the following parameters:\r\n# Resource limits\r\n#max_execution_time = 900\r\n#memory_limit = 512M\r\n# Data handling\r\n#post_max_size = 256M\r\n# File upload\r\n#upload_max_filesize = 256M\r\n# Extensions\r\n#extension=imagick.so\r\n\r\n## reboot to make sure the /etc/php.ini parameter changes take effect\r\n"
        }
       },
       "DependsOn": [
